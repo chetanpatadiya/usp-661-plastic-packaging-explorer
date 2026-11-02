@@ -1,0 +1,14 @@
+const {test}=require('node:test');const A=require('node:assert/strict');const C=require('../src/core.js');
+test('surface/volume: 150/30 is 5',()=>A.equal(C.ratio(150,30),5));
+test('extract loading: 40*5/20 is 10',()=>A.equal(C.loading(40,5,20),10));
+test('component mass fraction',()=>A.equal(C.fraction(8,20),40));
+test('minimum margin with source',()=>A.equal(C.margin(12,10,'min','SPEC-A'),2));
+test('maximum margin with source',()=>A.equal(C.margin(9,10,'max','SPEC-A'),1));
+test('reject missing spec source',()=>A.throws(()=>C.margin(12,10,'min',''),/reference/));
+test('reject missing inputs',()=>A.throws(()=>C.ratio('',30),/required/));
+test('reject zero volume',()=>A.throws(()=>C.ratio(20,0),/invalid/));
+test('reject negative extractables',()=>A.throws(()=>C.loading(-1,5,20),/invalid/));
+test('reject part mass greater total',()=>A.throws(()=>C.fraction(11,10),/exceed/));
+test('route raw material separately',()=>A.match(C.path({product:'drug',level:'material',contact:'direct',construction:'plastic',change:'new'}).join(' '),/661.1/));
+test('route system separately',()=>A.match(C.path({product:'drug',level:'system',contact:'direct',construction:'plastic',change:'new'}).join(' '),/661.2/));
+test('device SBS is not automatically USP system',()=>A.match(C.path({product:'device',level:'system',contact:'none',construction:'plastic',change:'new'}).join(' '),/do not automatically/));
